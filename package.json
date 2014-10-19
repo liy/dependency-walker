@@ -1,0 +1,30 @@
+{
+  "name": "dependency-walker",
+  "version": "0.1.0",
+  "description": "Use dependency statements in files for topological dependency sorting. Dependency statement name can be Statement name can be customised.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/liy/dependency-walker.git"
+  },
+  "keywords": [
+    "build",
+    "dependency",
+    "module",
+    "topological",
+    "sort"
+  ],
+  "author": "Zhengyi Li <liy8272@gmail.com> (http://aircapsule.com/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/liy/dependency-walker/issues"
+  },
+  "homepage": "https://github.com/liy/dependency-walker",
+  "devDependencies": {
+    "glob": "^4.0.6",
+    "topo-sort": "^0.4.1"
+  }
+}
