@@ -122,9 +122,3 @@ p.walk = function(){
 p.getSourcePath = function(file){
   return this.dirMap[file] + pt.sep + file;
 }
-
-var walker = new DepWalker({
-  // main: 'main.js',
-  directories: ['src', 'lib']
-});
-console.log(walker.walk());

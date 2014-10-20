@@ -2,8 +2,11 @@
 ```javascript
 var DepWalker = require('dependency-walker');
 
-// use 'depends' as the dependency statement.
-var walker = new DepWalker('depends');
-// get all files in 'src' directory and return sorted file dependencies.
-console.log(walker.walk('src'));
+// use main.js as entry point, and 2 source directories
+var walker = new DepWalker({
+  main: 'main.js',
+  directories: ['src', 'lib']
+});
+// return the sorted dependencies of main.js
+console.log(walker.walk());
 ```
