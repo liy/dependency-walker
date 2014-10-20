@@ -23,7 +23,7 @@
     "url": "https://github.com/liy/dependency-walker/issues"
   },
   "homepage": "https://github.com/liy/dependency-walker",
-  "devDependencies": {
+  "dependencies": {
     "glob": "^4.0.6",
     "topo-sort": "^0.4.1"
   }
