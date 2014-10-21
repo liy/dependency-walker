@@ -17,7 +17,7 @@
     "topological",
     "sort"
   ],
-  "author": "Zhengyi Li <liy8272@gmail.com> (http://aircapsule.com/)",
+  "author": "liy <liy8272@gmail.com> (http://aircapsule.com/)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/liy/dependency-walker/issues"
