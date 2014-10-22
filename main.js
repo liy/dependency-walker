@@ -2,7 +2,6 @@
 var glob = require('glob');
 var fs = require('fs');
 var TopoSort = require('topo-sort');
-var pt = require('path');
 
 /**
  * options: {
@@ -120,5 +119,5 @@ p.walk = function(){
 }
 
 p.getSourcePath = function(file){
-  return this.dirMap[file] + pt.sep + file;
+  return this.dirMap[file] + '/' + file;
 }
