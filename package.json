@@ -1,6 +1,6 @@
 {
   "name": "dependency-walker",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Use dependency statements in files for topological dependency sorting. Dependency statement name can be Statement name can be customised.",
   "main": "main.js",
   "scripts": {
