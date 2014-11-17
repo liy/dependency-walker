@@ -81,52 +81,38 @@ p.extract = function(sourcePath, dfs){
   }
 };
 
-p.searchFiles = function(dir, callback){
-  var files = [];
-
-  glob(this.options.pattern, {cwd: dir}, function(error, matches){
-    if(error){
-      throw new Error(error);
-    }
-
-    for(var i=0; i<matches.length; ++i){
-      files.push(matches[i]);
-    }
-
-    callback(files);
-  }.bind(this));
+p.searchFiles = function(dir){
+  return glob.sync(this.options.pattern, {cwd: dir});
 };
 
-p.walk = function(callback){
+p.walk = function(){
   this.tsort = new TopoSort();
-
-  var onSearchComplete = function(files){
-    files.forEach(function(file){
-      this.dirMap[file] = dir;
-    }.bind(this));
-
-    // If main entry point is specified, use it as the start file for recursive dependency extraction.
-    if(this.options.main){
-      this.extract(this.getSourcePath(this.options.main), true);
-    }
-    // Or, get all the files in the specified directories.
-    else{
-      for(var file in this.dirMap){
-        this.extract(this.getSourcePath(file));
-      }
-    }
-
-    callback(this.tsort.sort().reverse());
-  };
 
   // contains the source file's directory.
   this.dirMap = Object.create(null);
   // intialize directory map
   for(var i=0; i<this.options.directories.length; ++i){
     var dir = this.options.directories[i];
-    this.searchFiles(dir, onSearchComplete.bind(this));
+    var files = this.searchFiles(dir);
+
+    files.forEach(function(file){
+      this.dirMap[file] = dir;
+    }.bind(this));
   }
-}
+
+  // If main entry point is specified, use it as the start file for recursive dependency extraction.
+  if(this.options.main){
+    this.extract(this.getSourcePath(this.options.main), true);
+  }
+  // Or, get all the files in the specified directories.
+  else{
+    for(var file in this.dirMap){
+      this.extract(this.getSourcePath(file));
+    }
+  }
+
+  return this.tsort.sort().reverse();
+};
 
 p.getSourcePath = function(file){
   if(this.dirMap[file]){
