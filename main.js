@@ -68,56 +68,71 @@ p.extract = function(sourcePath, dfs){
       var params = results[1].replace(/'|"|\s/g,'').split(',');
       var dependSourcePath = this.getSourcePath(params[0]);
 
-      this.tsort.add(sourcePath, dependSourcePath);
-
-      if(dfs){
-        this.extract(dependSourcePath, dfs);
+      if(dependSourcePath){
+        this.tsort.add(sourcePath, dependSourcePath);
+        if(dfs){
+          this.extract(dependSourcePath, dfs);
+        }
       }
     }
     else{
       this.tsort.add(sourcePath, []);
     }
   }
-}
+};
 
-p.searchFiles = function(dir){
+p.searchFiles = function(dir, callback){
   var files = [];
 
-  glob(this.options.pattern, {sync: true, cwd: dir}, function(error, matches){
+  glob(this.options.pattern, {cwd: dir}, function(error, matches){
+    if(error){
+      throw new Error(error);
+    }
+
     for(var i=0; i<matches.length; ++i){
       files.push(matches[i]);
     }
+
+    callback(files);
   }.bind(this));
+};
 
-  return files;
-}
-
-p.walk = function(){
+p.walk = function(callback){
   this.tsort = new TopoSort();
+
+  var onSearchComplete = function(files){
+    files.forEach(function(file){
+      this.dirMap[file] = dir;
+    }.bind(this));
+
+    // If main entry point is specified, use it as the start file for recursive dependency extraction.
+    if(this.options.main){
+      this.extract(this.getSourcePath(this.options.main), true);
+    }
+    // Or, get all the files in the specified directories.
+    else{
+      for(var file in this.dirMap){
+        this.extract(this.getSourcePath(file));
+      }
+    }
+
+    callback(this.tsort.sort().reverse());
+  };
 
   // contains the source file's directory.
   this.dirMap = Object.create(null);
   // intialize directory map
-  this.options.directories.forEach(function(dir){
-    this.searchFiles(dir).forEach(function(file){
-      this.dirMap[file] = dir;
-    }.bind(this));
-  }.bind(this));
-
-  // If main entry point is specified, use it as the start file for recursive dependency extraction.
-  if(this.options.main){
-    this.extract(this.getSourcePath(this.options.main), true);
+  for(var i=0; i<this.options.directories.length; ++i){
+    var dir = this.options.directories[i];
+    this.searchFiles(dir, onSearchComplete.bind(this));
   }
-  // Or, get all the files in the specified directories.
-  else{
-    for(var file in this.dirMap){
-      this.extract(this.getSourcePath(file));
-    }
-  }
-
-  return this.tsort.sort().reverse();
 }
 
 p.getSourcePath = function(file){
-  return this.dirMap[file] + '/' + file;
-}
+  if(this.dirMap[file]){
+    return this.dirMap[file] + '/' + file;
+  }
+  else{
+    return null;
+  }
+};
